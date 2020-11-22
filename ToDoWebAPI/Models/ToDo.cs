@@ -1,6 +1,6 @@
 ﻿namespace ToDoWebAPI.Models
 {
-    public class ToDo
+    public record ToDo
     {
         public int ID { get; set; }
         public string Title { get; set; }
