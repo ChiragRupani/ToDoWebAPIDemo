@@ -8,14 +8,12 @@ using Xunit;
 
 namespace ToDoWebAPI.IntegrationTests
 {
-    public class ToDoAPI : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ToDoAPITest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly HttpClient client;
-        private readonly CustomWebApplicationFactory<Startup> factory;
-
-        public ToDoAPI(CustomWebApplicationFactory<Startup> factory)
-        {
-            this.factory = factory;
+        
+        public ToDoAPITest(CustomWebApplicationFactory<Startup> factory)
+        {        
             client = factory.CreateDefaultClient();
             client.DefaultRequestVersion = HttpVersion.Version20;
         }
