@@ -1,27 +1,24 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ToDoWebAPI.Controllers
+namespace ToDoWebAPI.Controllers;
+
+[ApiController]
+public class ErrorController : ControllerBase
 {
-    [ApiController]
-    public class ErrorController : ControllerBase
+    [Route("/error-local-development")]
+    [HttpGet, HttpPost]
+    public IActionResult ErrorLocalDevelopment(
+        [FromServices] IWebHostEnvironment webHostEnvironment)
     {
-        [Route("/error-local-development")]
-        [HttpGet, HttpPost]
-        public IActionResult ErrorLocalDevelopment(
-            [FromServices] IWebHostEnvironment webHostEnvironment)
-        {
-            var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
+        var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
 
-            return Problem(
-                detail: context.Error.StackTrace,
-                title: context.Error.Message);
-        }
-
-        [Route("/error")]
-        [HttpGet, HttpPost]
-        public IActionResult Error() => Problem();
+        return Problem(
+            detail: context.Error.StackTrace,
+            title: context.Error.Message);
     }
+
+    [Route("/error")]
+    [HttpGet, HttpPost]
+    public IActionResult Error() => Problem();
 }

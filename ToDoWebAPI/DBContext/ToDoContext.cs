@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ToDoWebAPI.Models;
 
@@ -32,7 +29,7 @@ namespace ToDoWebAPI.DBContext
                 {
                     List<ToDo> result = JsonSerializer.Deserialize<List<ToDo>>(jsonData);
                     await ToDo.AddRangeAsync(result);
-                    await this.SaveChangesAsync();
+                    await SaveChangesAsync();
                 }
             }
         }
