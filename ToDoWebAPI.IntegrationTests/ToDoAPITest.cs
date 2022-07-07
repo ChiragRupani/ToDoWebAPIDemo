@@ -18,11 +18,8 @@ public class ToDoAPITest : IClassFixture<CustomWebApplicationFactory<Startup>>
     [Fact]
     public async Task VerifyGetToDoAPIAsync()
     {
-        // Act
-        var response = await client.GetAsync("/api/todo");
-        response.EnsureSuccessStatusCode();
-        var responseStream = await response.Content.ReadAsStreamAsync();
-        var todos = await JsonSerializer.DeserializeAsync<List<ToDo>>(responseStream);
+        // Act        
+        var todos = await client.GetFromJsonAsync<List<ToDo>>("/api/todo");
 
         // Assert            
         var expectedToDos = Utilities.GetToDos();

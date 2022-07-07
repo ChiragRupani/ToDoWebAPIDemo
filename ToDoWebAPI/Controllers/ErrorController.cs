@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace ToDoWebAPI.Controllers;
 
 [ApiController]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class ErrorController : ControllerBase
 {
-    [Route("/error-local-development")]
-    [HttpGet, HttpPost]
+    [Route("/error-local-development")]    
     public IActionResult ErrorLocalDevelopment(
         [FromServices] IWebHostEnvironment webHostEnvironment)
     {
@@ -19,6 +19,9 @@ public class ErrorController : ControllerBase
     }
 
     [Route("/error")]
-    [HttpGet, HttpPost]
-    public IActionResult Error() => Problem();
+    public IActionResult Error()
+    {
+        var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
+        return Problem(title: context.Error.Message);
+    }
 }
