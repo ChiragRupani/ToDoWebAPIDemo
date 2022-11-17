@@ -2,51 +2,50 @@
 using ToDoWebAPI.DBContext;
 using ToDoWebAPI.Models;
 
-namespace ToDoWebAPI.Repository
+namespace ToDoWebAPI.Repository;
+
+public class ToDoRepository
 {
-    public class ToDoRepository
+    private readonly ToDoContext context;
+
+    public ToDoRepository(IWebHostEnvironment environment, ToDoContext context)
     {
-        private readonly ToDoContext context;
+        this.context = context;
+        string filePath = Path.Combine(environment.ContentRootPath, "Repository\\todos.json");
+        context.EnsureInitialToDoAsync(filePath).GetAwaiter().GetResult();
+    }
 
-        public ToDoRepository(IWebHostEnvironment environment, ToDoContext context)
-        {
-            this.context = context;
-            string filePath = Path.Combine(environment.ContentRootPath, "Repository\\todos.json");
-            context.EnsureInitialToDoAsync(filePath).GetAwaiter().GetResult();
-        }
+    public Task<List<ToDo>> GetToDosAsync()
+    {
+        return context.ToDo.ToListAsync();
+    }
 
-        public Task<List<ToDo>> GetToDosAsync()
-        {
-            return context.ToDo.ToListAsync();
-        }
+    public async Task AddToDoAsync(ToDo model)
+    {
+        context.ToDo.Add(model);
+        await context.SaveChangesAsync();
+    }
 
-        public async Task AddToDoAsync(ToDo model)
-        {
-            context.ToDo.Add(model);
-            await context.SaveChangesAsync();
-        }
+    public ValueTask<ToDo> FindAsync(int id)
+    {
+        var result = context.FindAsync<ToDo>(id);
+        return result;
+    }
 
-        public ValueTask<ToDo> FindAsync(int id)
-        {
-            var result = context.FindAsync<ToDo>(id);
-            return result;
-        }
+    public async Task UpdateAsync(ToDo toDo)
+    {
+        context.Entry(toDo).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+    }
 
-        public async Task UpdateAsync(ToDo toDo)
-        {
-            context.Entry(toDo).State = EntityState.Modified;
-            await context.SaveChangesAsync();
-        }
+    public async Task DeleteAsync(ToDo todo)
+    {
+        context.ToDo.Remove(todo);
+        await context.SaveChangesAsync();
+    }
 
-        public async Task DeleteAsync(ToDo todo)
-        {
-            context.ToDo.Remove(todo);
-            await context.SaveChangesAsync();
-        }
-
-        internal bool ToDoExists(int id)
-        {
-            return context.ToDo.Any(e => e.ID == id);
-        }
+    internal bool ToDoExists(int id)
+    {
+        return context.ToDo.Any(e => e.ID == id);
     }
 }
