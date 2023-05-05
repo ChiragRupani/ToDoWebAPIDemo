@@ -1,8 +1,11 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ToDoWebAPI.DBContext;
 using ToDoWebAPI.Repository;
+
+[assembly: ApiConventionType(typeof(DefaultApiConventions))]
 
 namespace ToDoWebAPI;
 

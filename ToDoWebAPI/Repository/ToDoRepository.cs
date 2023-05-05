@@ -26,9 +26,9 @@ public class ToDoRepository
         await context.SaveChangesAsync();
     }
 
-    public ValueTask<ToDo> FindAsync(int id)
+    public ValueTask<ToDo?> FindAsync(int ID)
     {
-        var result = context.FindAsync<ToDo>(id);
+        var result = context.FindAsync<ToDo>(ID);
         return result;
     }
 
@@ -44,8 +44,8 @@ public class ToDoRepository
         await context.SaveChangesAsync();
     }
 
-    internal bool ToDoExists(int id)
+    internal bool ToDoExists(int ID)
     {
-        return context.ToDo.Any(e => e.ID == id);
+        return context.ToDo.Any(e => e.ID == ID);
     }
 }

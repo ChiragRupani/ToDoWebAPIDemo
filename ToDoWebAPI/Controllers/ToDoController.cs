@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoWebAPI.Models;
 using ToDoWebAPI.Repository;
+using Microsoft.AspNetCore.Http;
 
 namespace ToDoWebAPI.Controllers;
 
@@ -25,10 +26,13 @@ public class ToDoController : ControllerBase
     }
 
     // GET: api/ToDo/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ToDo>> GetToDo(int id)
+    [HttpGet("{ID}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<ToDo>> GetToDo(int ID)
     {
-        var toDo = await repository.FindAsync(id);
+        var toDo = await repository.FindAsync(ID);
 
         if (toDo == null)
         {
@@ -40,10 +44,14 @@ public class ToDoController : ControllerBase
 
     // PUT: api/ToDo/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutToDo(int id, ToDo todo)
+    [HttpPut("{ID}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<IActionResult> PutToDo(int ID, ToDo todo)
     {
-        if (id != todo.ID)
+        if (ID != todo.ID)
         {
             return BadRequest();
         }
@@ -54,7 +62,7 @@ public class ToDoController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!repository.ToDoExists(id))
+            if (!repository.ToDoExists(ID))
             {
                 return NotFound();
             }
@@ -73,17 +81,17 @@ public class ToDoController : ControllerBase
     public async Task<ActionResult<ToDo>> PostToDo(ToDo todo)
     {
         await repository.AddToDoAsync(todo);
-        return CreatedAtAction(nameof(GetToDo), new { id = todo.ID }, todo);
+        return CreatedAtAction(nameof(GetToDo), new { ID = todo.ID }, todo);
     }
 
     // DELETE: api/ToDo/5
-    [HttpDelete("{id}")]
+    [HttpDelete("{ID}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
-    public async Task<IActionResult> DeleteToDo(int id)
+    public async Task<IActionResult> DeleteToDo(int ID)
     {
-        var todo = await repository.FindAsync(id);
+        var todo = await repository.FindAsync(ID);
         if (todo == null)
         {
             return NotFound();
