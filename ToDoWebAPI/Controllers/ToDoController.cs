@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoWebAPI.Models;
 using ToDoWebAPI.Repository;
-using Microsoft.AspNetCore.Http;
 
 namespace ToDoWebAPI.Controllers;
 

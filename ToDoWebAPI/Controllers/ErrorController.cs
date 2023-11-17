@@ -7,7 +7,7 @@ namespace ToDoWebAPI.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
 public class ErrorController : ControllerBase
 {
-    [Route("/error-local-development")]    
+    [Route("/error-local-development")]
     public IActionResult ErrorLocalDevelopment(
         [FromServices] IWebHostEnvironment webHostEnvironment)
     {

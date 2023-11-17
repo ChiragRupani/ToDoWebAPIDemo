@@ -24,13 +24,11 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
 
             var sp = services.BuildServiceProvider();
 
-            using (var scope = sp.CreateScope())
-            {
-                var scopedServices = scope.ServiceProvider;
-                var db = scopedServices.GetRequiredService<ToDoContext>();
-                db.Database.EnsureCreated();
-                Utilities.InitializeDbForTests(db);
-            }
+            using var scope = sp.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var db = scopedServices.GetRequiredService<ToDoContext>();
+            db.Database.EnsureCreated();
+            Utilities.InitializeDbForTests(db);
         });
     }
 }
