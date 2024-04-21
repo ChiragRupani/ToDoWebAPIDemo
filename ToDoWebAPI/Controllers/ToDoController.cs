@@ -33,7 +33,7 @@ public class ToDoController : ControllerBase
     {
         var toDo = await repository.FindAsync(ID);
 
-        if (toDo == null)
+        if (toDo is null)
         {
             return NotFound();
         }

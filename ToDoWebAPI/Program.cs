@@ -4,13 +4,13 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        CreateHostBuilder(args).Build().Run();
-    }
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        Startup startup = new Startup(builder.Configuration);
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+        startup.ConfigureServices(builder.Services);
+
+        WebApplication app = builder.Build();
+        startup.Configure(app, app.Environment);
+        app.Run();
+    }
 }
