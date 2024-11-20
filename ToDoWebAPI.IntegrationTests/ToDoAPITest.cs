@@ -11,7 +11,7 @@ public class ToDoAPITest : IClassFixture<CustomWebApplicationFactory<Startup>>
     public ToDoAPITest(CustomWebApplicationFactory<Startup> factory)
     {
         client = factory.CreateDefaultClient();
-        client.DefaultRequestVersion = HttpVersion.Version20;
+        client.DefaultRequestVersion = HttpVersion.Version30;
     }
 
     [Fact]
