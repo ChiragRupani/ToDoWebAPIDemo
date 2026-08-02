@@ -31,7 +31,7 @@ public class ToDoController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<GetToDosResult> GetToDo()
+    public async Task<Ok<List<ToDo>>> GetToDo()
     {
         var items = await repository.GetToDosAsync();
         return TypedResults.Ok(items);
@@ -39,7 +39,7 @@ public class ToDoController : ControllerBase
 
     // GET: api/ToDo/5
     [HttpGet("{ID}", Name = "GetToDoById")]
-    public async Task<GetToDoResult> GetToDo(int ID)
+    public async Task<Results<Ok<ToDo>, NotFound>> GetToDo(int ID)
     {
         var toDo = await repository.FindAsync(ID);
 
@@ -54,7 +54,7 @@ public class ToDoController : ControllerBase
     // PUT: api/ToDo/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{ID}")]
-    public async Task<PutToDoResult> PutToDo(int ID, ToDo todo)
+    public async Task<Results<NoContent, BadRequest, NotFound>> PutToDo(int ID, ToDo todo)
     {
         if (ID != todo.ID)
         {
@@ -83,7 +83,7 @@ public class ToDoController : ControllerBase
     // POST: api/ToDo
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<PostToDoResult> PostToDo(ToDo todo)
+    public async Task<CreatedAtRoute<ToDo>> PostToDo(ToDo todo)
     {
         await repository.AddToDoAsync(todo);
         return TypedResults.CreatedAtRoute(todo, nameof(GetToDo), new { ID = todo.ID });
@@ -91,7 +91,7 @@ public class ToDoController : ControllerBase
 
     // DELETE: api/ToDo/5
     [HttpDelete("{ID}")]
-    public async Task<DeleteToDoResult> DeleteToDo(int ID)
+    public async Task<Results<NoContent, NotFound>> DeleteToDo(int ID)
     {
         var todo = await repository.FindAsync(ID);
         if (todo == null)

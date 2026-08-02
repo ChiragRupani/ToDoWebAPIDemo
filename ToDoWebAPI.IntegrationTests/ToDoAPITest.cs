@@ -10,7 +10,7 @@ public class ToDoAPITest : IClassFixture<CustomWebApplicationFactory<Startup>>
 
     public ToDoAPITest(CustomWebApplicationFactory<Startup> factory)
     {
-        client = factory.CreateDefaultClient();
+        client = factory.CreateClient();
         client.DefaultRequestVersion = HttpVersion.Version30;
     }
 
@@ -23,5 +23,16 @@ public class ToDoAPITest : IClassFixture<CustomWebApplicationFactory<Startup>>
         // Assert            
         var expectedToDos = Utilities.GetToDos();
         Assert.Equal(actual: todos, expected: expectedToDos);
+    }
+
+    [Fact]
+    public async Task VerifyGetSingleToDoAPIAsync()
+    {
+        // Act        
+        var todo = await client.GetFromJsonAsync<ToDo>("/api/todo/1", cancellationToken: TestContext.Current.CancellationToken);
+
+        // Assert            
+        var expectedToDos = Utilities.GetToDos();
+        Assert.Equal(actual: todo, expected: expectedToDos[0]);
     }
 }
