@@ -5,7 +5,6 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using ToDoWebAPI.DBContext;
 using ToDoWebAPI.Repository;
 
@@ -45,7 +44,10 @@ public class Startup
         services.AddControllers()
             .AddJsonOptions(x => x.JsonSerializerOptions.PropertyNamingPolicy = null);
 
-        services.AddOpenApi();
+        services.AddOpenApi(options =>
+        {
+            options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_2;
+        });
 
         //services.AddSwaggerGen(c =>
         //{

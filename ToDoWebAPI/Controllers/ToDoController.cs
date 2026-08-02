@@ -1,13 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoWebAPI.Models;
 using ToDoWebAPI.Repository;
 
 namespace ToDoWebAPI.Controllers;
 
+// Union types leveraging built-in HttpResults framework classes
+public union GetToDosResult(Ok<List<ToDo>>);
+public union GetToDoResult(Ok<ToDo>, NotFound);
+public union PutToDoResult(NoContent, BadRequest, NotFound);
+public union PostToDoResult(CreatedAtRoute<ToDo>);
+public union DeleteToDoResult(NoContent, NotFound);
+
 [Route("api/[controller]")]
 [ApiController]
-[ApiConventionType(typeof(DefaultApiConventions))]
 public class ToDoController : ControllerBase
 {
     private readonly ToDoRepository repository;
@@ -18,41 +26,39 @@ public class ToDoController : ControllerBase
     }
 
     // GET: api/ToDo
+    /// <summary>
+    /// Gets ToDo from in-memory DB
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ToDo>>> GetToDo()
+    public async Task<GetToDosResult> GetToDo()
     {
-        return await repository.GetToDosAsync();
+        var items = await repository.GetToDosAsync();
+        return TypedResults.Ok(items);
     }
 
     // GET: api/ToDo/5
-    [HttpGet("{ID}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesDefaultResponseType]
-    public async Task<ActionResult<ToDo>> GetToDo(int ID)
+    [HttpGet("{ID}", Name = "GetToDoById")]
+    public async Task<GetToDoResult> GetToDo(int ID)
     {
         var toDo = await repository.FindAsync(ID);
 
         if (toDo is null)
         {
-            return NotFound();
+            return TypedResults.NotFound();
         }
 
-        return toDo;
+        return TypedResults.Ok(toDo);
     }
 
     // PUT: api/ToDo/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{ID}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesDefaultResponseType]
-    public async Task<IActionResult> PutToDo(int ID, ToDo todo)
+    public async Task<PutToDoResult> PutToDo(int ID, ToDo todo)
     {
         if (ID != todo.ID)
         {
-            return BadRequest();
+            return TypedResults.BadRequest();
         }
 
         try
@@ -63,7 +69,7 @@ public class ToDoController : ControllerBase
         {
             if (!repository.ToDoExists(ID))
             {
-                return NotFound();
+                return TypedResults.NotFound(); 
             }
             else
             {
@@ -71,32 +77,29 @@ public class ToDoController : ControllerBase
             }
         }
 
-        return NoContent();
+        return TypedResults.NoContent();
     }
 
     // POST: api/ToDo
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<ToDo>> PostToDo(ToDo todo)
+    public async Task<PostToDoResult> PostToDo(ToDo todo)
     {
         await repository.AddToDoAsync(todo);
-        return CreatedAtAction(nameof(GetToDo), new { ID = todo.ID }, todo);
+        return TypedResults.CreatedAtRoute(todo, nameof(GetToDo), new { ID = todo.ID });
     }
 
     // DELETE: api/ToDo/5
     [HttpDelete("{ID}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesDefaultResponseType]
-    public async Task<IActionResult> DeleteToDo(int ID)
+    public async Task<DeleteToDoResult> DeleteToDo(int ID)
     {
         var todo = await repository.FindAsync(ID);
         if (todo == null)
         {
-            return NotFound();
+            return TypedResults.NotFound();
         }
 
         await repository.DeleteAsync(todo);
-        return NoContent();
+        return TypedResults.NoContent();
     }
 }

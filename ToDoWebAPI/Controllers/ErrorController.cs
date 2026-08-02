@@ -14,14 +14,14 @@ public class ErrorController : ControllerBase
         var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
 
         return Problem(
-            detail: context.Error.StackTrace,
-            title: context.Error.Message);
+            detail: context?.Error?.StackTrace,
+            title: context?.Error?.Message);
     }
 
     [Route("/error")]
     public IActionResult Error()
     {
         var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
-        return Problem(title: context.Error.Message);
+        return Problem(title: context?.Error?.Message);
     }
 }

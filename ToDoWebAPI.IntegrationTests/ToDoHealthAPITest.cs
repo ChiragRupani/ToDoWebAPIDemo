@@ -20,7 +20,7 @@ public class ToDoHealthAPITest : IClassFixture<WebApplicationFactory<Startup>>
         var client = factory.CreateDefaultClient();
 
         // Act
-        string healthStatus = await client.GetStringAsync(url);
+        string healthStatus = await client.GetStringAsync(url, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal("Healthy", healthStatus, true);
