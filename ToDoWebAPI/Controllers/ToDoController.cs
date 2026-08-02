@@ -7,12 +7,14 @@ using ToDoWebAPI.Repository;
 
 namespace ToDoWebAPI.Controllers;
 
+/*
 // Union types leveraging built-in HttpResults framework classes
 public union GetToDosResult(Ok<List<ToDo>>);
 public union GetToDoResult(Ok<ToDo>, NotFound);
 public union PutToDoResult(NoContent, BadRequest, NotFound);
 public union PostToDoResult(CreatedAtRoute<ToDo>);
 public union DeleteToDoResult(NoContent, NotFound);
+*/
 
 [Route("api/[controller]")]
 [ApiController]
